@@ -14,34 +14,19 @@ from iou_tracker import track_iou
 from util import load_mot, save_to_csv
 
 
-def main(args):
-    detections = load_mot(args.detection_path)
+def main(detection_path, output_path, sigma_l, sigma_h, sigma_iou, t_min):
+    detections = load_mot(detection_path)
 
     start = time()
-    tracks = track_iou(detections, args.sigma_l, args.sigma_h, args.sigma_iou, args.t_min)
+    tracks = track_iou(detections, sigma_l, sigma_h, sigma_iou, t_min)
     end = time()
 
     num_frames = len(detections)
     print("finished at " + str(int(num_frames / (end - start))) + " fps!")
 
-    save_to_csv(args.output_path, tracks)
+    save_to_csv(output_path, tracks)
 
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description="IOU Tracker demo script")
-    parser.add_argument('-d', '--detection_path', type=str, required=True,
-                        help="full path to CSV file containing the detections")
-    parser.add_argument('-o', '--output_path', type=str, required=True,
-                        help="output path to store the tracking results (MOT challenge devkit compatible format)")
-    parser.add_argument('-sl', '--sigma_l', type=float, default=0,
-                        help="low detection threshold")
-    parser.add_argument('-sh', '--sigma_h', type=float, default=0.5,
-                        help="high detection threshold")
-    parser.add_argument('-si', '--sigma_iou', type=float, default=0.5,
-                        help="intersection-over-union threshold")
-    parser.add_argument('-tm', '--t_min', type=float, default=2,
-                        help="minimum track length")
-
-    args = parser.parse_args()
-    main(args)
+    main("./MOT17-04-SDP/det/det.txt", "./MOT17-04-SDP.txt", 0, 0.5, 0.5, 2)
